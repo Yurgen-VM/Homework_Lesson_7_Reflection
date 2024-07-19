@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Text;
 
 namespace Task_1
@@ -59,11 +60,12 @@ namespace Task_1
             foreach (var prop in propertis)
             {
                 var temp = prop.GetValue(obj);
-                var atr = prop.GetCustomAttribute(typeof(CustomNameAttribute), false);
+                var atr = prop.GetCustomAttribute(typeof(CustomNameAttribute), false);               
 
-                if (atr is CustomNameAttribute ageAttribute)
+                if (atr is CustomNameAttribute attribute)
                 {
-                    res.Append(prop.Name + ":");
+                    res.Append(attribute.name + ":");
+                   
                 }
                 else
                 {
@@ -87,7 +89,8 @@ namespace Task_1
         {
             string[] strArray = s.Split('|'); // Конвертируем нашу строку в масив, разделяя элементы по |
             string[] element = strArray[0].Split(':'); // Разделяем первый элемент массива по :
-            object obj = Activator.CreateInstance(null, element[0].Split(",")[0]).Unwrap();
+            object? obj = Activator.CreateInstance(element[0].Split(",")[1], element[0].Split(",")[0])?.Unwrap();
+                        
             if (strArray.Length > 1 && obj != null)
             {
                 Type type = obj.GetType();
@@ -97,7 +100,7 @@ namespace Task_1
                     PropertyInfo[] propertis = type.GetProperties();
 
                     var atr = propertis[i - 1].GetCustomAttribute(typeof(CustomNameAttribute), false);
-                    CustomNameAttribute atribute = atr as CustomNameAttribute;
+                    CustomNameAttribute? atribute = atr as CustomNameAttribute;
                     
                     if (atr is CustomNameAttribute && propertis[i - 1].PropertyType == typeof(int))
                     {
